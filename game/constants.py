@@ -62,12 +62,11 @@ FIRE_YELLOW   = (255, 240,  60)
 SMOKE_GRAY    = (100,  90,  80)
 
 # ─── Key Bindings ──────────────────────────────────────────────────────────────
-KEY_VIEW_MAP       = pygame.K_F1
+KEY_VIEW_CHART     = pygame.K_F1
 KEY_VIEW_PERISCOPE = pygame.K_F2
 KEY_VIEW_BRIDGE    = pygame.K_F3
 KEY_VIEW_DAMAGE    = pygame.K_F4
 KEY_VIEW_TORPEDO   = pygame.K_F5
-KEY_VIEW_CHART     = pygame.K_F6
 
 KEY_FIRE_TORPEDO   = pygame.K_SPACE
 KEY_DIVE           = pygame.K_d

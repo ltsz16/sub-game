@@ -21,7 +21,7 @@ from game.constants import (
     KEY_VIEW_TORPEDO,
 )
 from game.rendering.hud import draw_horizon
-from game.rendering.ship_renderer import draw_ship_side
+from game.rendering.sprites import draw_ship_side_sprite
 from game.screens.combat_shared import update_combat_tick, cycle_to_view
 
 
@@ -92,7 +92,7 @@ class BridgeViewScreen(BaseScreen):
                 y = SCREEN_HEIGHT // 2 + 18
                 scale = max(1.8, 10.0 - rng * 0.8)
                 color = (220, 200, 170) if ship.is_warship else (170, 170, 170)
-                draw_ship_side(surface, ship.ship_id, x, y, scale=scale, color=color)
+                draw_ship_side_sprite(surface, ship.ship_id, x, y, scale=scale, color=color)
 
         hdr = [
             "BRIDGE VIEW",
@@ -105,5 +105,5 @@ class BridgeViewScreen(BaseScreen):
             t = self.font.render(line, True, AMBER_BRIGHT if i == 0 else PHOSPHOR_BRIGHT)
             surface.blit(t, (18, 18 + i * 20))
 
-        hint = self.font.render("F1 Chart  F2 Periscope  F4 Damage  F5 Torpedo Room", True, LIGHT_GRAY)
+        hint = self.font.render("F1 Chart  F2 Periscope  F3 Bridge  F4 Damage  F5 Torpedo", True, LIGHT_GRAY)
         surface.blit(hint, (18, SCREEN_HEIGHT - 26))

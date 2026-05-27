@@ -26,6 +26,7 @@ from game.constants import (
     KEY_VIEW_TORPEDO,
 )
 from game.rendering.ship_renderer import draw_ship_top
+from game.rendering.sprites import draw_ship_top_sprite
 from game.rendering.hud import HUD
 from game.rendering.effects import ExplosionEffect
 from game.entities.torpedo import Torpedo
@@ -107,14 +108,15 @@ class NavChartScreen(BaseScreen):
         for nm in (5, 10, 15, 20):
             pygame.draw.circle(surface, PHOSPHOR_DIM, (cx, cy), nm * 14, 1)
 
-        # Draw sub
-        draw_ship_top(surface, "submarine", cx, cy, scale=1.1, color=(140, 220, 180), course_deg=sub.course)
+        # Draw sub using sprite
+        draw_ship_top_sprite(surface, "submarine", cx, cy, scale=1.1, color=(140, 220, 180), course_deg=sub.course)
 
         # Draw convoy ships
         for ship in convoy.alive_ships:
             sx, sy = self._world_to_chart(sub.lon, sub.lat, ship.lon, ship.lat)
             color = (240, 180, 80) if ship.is_warship else (180, 180, 180)
-            draw_ship_top(surface, ship.ship_id, sx, sy, scale=1.0, color=color, course_deg=ship.course)
+            # Draw ship using sprite
+            draw_ship_top_sprite(surface, ship.ship_id, sx, sy, scale=1.0, color=color, course_deg=ship.course)
 
         # Torpedo tracks
         for torp in state["torpedoes"]:
@@ -145,5 +147,5 @@ class NavChartScreen(BaseScreen):
             surface.blit(txt, (log_panel.x + 10, y))
             y += 20
 
-        hint = self.font.render("F2 Periscope  F3 Bridge  F4 Damage  F5 Torpedo Room  Space Fire", True, PHOSPHOR_BRIGHT)
+        hint = self.font.render("F1 Chart  F2 Periscope  F3 Bridge  F4 Damage  F5 Torpedo", True, PHOSPHOR_DIM)
         surface.blit(hint, (18, SCREEN_HEIGHT - 28))

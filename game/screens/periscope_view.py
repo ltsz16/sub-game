@@ -22,7 +22,7 @@ from game.constants import (
     KEY_FIRE_TORPEDO,
 )
 from game.rendering.hud import draw_horizon
-from game.rendering.ship_renderer import draw_ship_side
+from game.rendering.sprites import draw_ship_side_sprite
 from game.entities.torpedo import Torpedo
 from game.screens.combat_shared import update_combat_tick, cycle_to_view
 
@@ -97,12 +97,14 @@ class PeriscopeViewScreen(BaseScreen):
             rel = ((brg - sub.course + 540) % 360) - 180
             if abs(rel) <= 42:  # approx field of view
                 x = int(center[0] + (rel / 42.0) * (radius - 40))
-                y = SCREEN_HEIGHT // 2 + 40
-                scale = max(2.0, 14.0 - rng * 1.2)
-                color = (220, 200, 170) if ship.is_warship else (180, 180, 180)
-                draw_ship_side(surface, ship.ship_id, x, y, scale=scale, color=color)
-                txt = self.font.render(f"{ship.name}  {rng:.1f}nm  BRG {brg:03.0f}", True, LIGHT_GRAY)
-                surface.blit(txt, (x - txt.get_width() // 2, y + 40))
+                y = SCREEN_HEIGHT // 2 + 30
+                # Increased scale for better visibility
+                scale = max(3.5, 18.0 - rng * 1.2)
+                color = (240, 200, 160) if ship.is_warship else (190, 190, 190)
+                draw_ship_side_sprite(surface, ship.ship_id, x, y, scale=scale, color=color)
+                # Ship label below image
+                txt = self.font.render(f"{ship.name} {rng:.1f}nm BRG {brg:03.0f}", True, LIGHT_GRAY)
+                surface.blit(txt, (x - txt.get_width() // 2, y + 60))
 
         # HUD text
         hud = [
@@ -116,5 +118,5 @@ class PeriscopeViewScreen(BaseScreen):
             t = self.font.render(line, True, AMBER_BRIGHT if i == 0 else PHOSPHOR_BRIGHT)
             surface.blit(t, (18, 18 + i * 20))
 
-        hint = self.font.render("Space Fire  F1 Chart  F3 Bridge  F4 Damage  F5 Torpedo Room", True, PHOSPHOR_BRIGHT)
+        hint = self.font.render("Space Fire  F1 Chart  F2 Periscope  F3 Bridge  F4 Damage  F5 Torpedo", True, PHOSPHOR_BRIGHT)
         surface.blit(hint, (18, SCREEN_HEIGHT - 26))

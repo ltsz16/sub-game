@@ -9,7 +9,7 @@ from game.constants import SCREEN_WIDTH, SCREEN_HEIGHT, DARK_NAVY, PANEL_BG, PAN
 from game.data.submarines import SUBMARINES
 from game.entities.submarine import Submarine
 from game.systems.career import CareerState
-from game.rendering.ship_renderer import draw_ship_side
+from game.rendering.sprites import draw_ship_side_sprite
 
 
 class SubSelectScreen(BaseScreen):
@@ -82,7 +82,7 @@ class SubSelectScreen(BaseScreen):
         # Draw submarine image on left side, visible and within bounds
         sub_x = card.x + 100
         sub_y = card.y + 200
-        draw_ship_side(surface, "submarine", sub_x, sub_y, scale=4.0, color=(80, 92, 110))
+        draw_ship_side_sprite(surface, "submarine", sub_x, sub_y, scale=5.5, color=(100, 200, 240))
 
         lines = [
             f"Year Available: {spec['year_available']}",
