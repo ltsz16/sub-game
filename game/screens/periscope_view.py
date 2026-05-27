@@ -20,6 +20,9 @@ from game.constants import (
     KEY_VIEW_DAMAGE,
     KEY_VIEW_TORPEDO,
     KEY_FIRE_TORPEDO,
+    KEY_DIVE,
+    KEY_SURFACE,
+    DEPTH_PERISCOPE,
 )
 from game.rendering.hud import draw_horizon
 from game.rendering.sprites import draw_ship_side_sprite
@@ -47,6 +50,16 @@ class PeriscopeViewScreen(BaseScreen):
                 sub.course = (sub.course - 2) % 360
             elif event.key == pygame.K_RIGHT:
                 sub.course = (sub.course + 2) % 360
+            elif event.key == pygame.K_UP:
+                sub.set_speed(min(3, sub.speed_setting + 1))
+            elif event.key == pygame.K_DOWN:
+                sub.set_speed(max(0, sub.speed_setting - 1))
+            elif event.key == KEY_DIVE:
+                # Dive to periscope depth or deeper
+                sub.target_depth = max(sub.target_depth + 50, DEPTH_PERISCOPE)
+            elif event.key == KEY_SURFACE:
+                # Surface
+                sub.target_depth = 0
             elif event.key == KEY_FIRE_TORPEDO:
                 if sub.fire_fore():
                     torp = Torpedo(sub.lon, sub.lat, sub.course, depth=sub.torp_depth, high_speed=sub.torp_speed_high, fuse=sub.torp_fuse)
@@ -118,5 +131,5 @@ class PeriscopeViewScreen(BaseScreen):
             t = self.font.render(line, True, AMBER_BRIGHT if i == 0 else PHOSPHOR_BRIGHT)
             surface.blit(t, (18, 18 + i * 20))
 
-        hint = self.font.render("Space Fire  F1 Chart  F2 Periscope  F3 Bridge  F4 Damage  F5 Torpedo", True, PHOSPHOR_BRIGHT)
+        hint = self.font.render("Arrow keys: course/speed  D/S: dive/surface  Space: fire  F1-F5: views", True, PHOSPHOR_BRIGHT)
         surface.blit(hint, (18, SCREEN_HEIGHT - 26))

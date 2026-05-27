@@ -9,8 +9,8 @@ import random
 class DepthCharge:
     """A single depth charge dropped in the water."""
 
-    LETHAL_RADIUS  = 0.008   # nm — instant kill zone
-    DAMAGE_RADIUS  = 0.025   # nm — damage zone
+    LETHAL_RADIUS  = 0.010   # nm — high damage zone (about 60 ft)
+    DAMAGE_RADIUS  = 0.035   # nm — damage zone (about 210 ft)
     SINK_RATE      = 8.0     # feet per second descent rate
 
     def __init__(self, lon: float, lat: float, detonation_depth: float):
@@ -68,11 +68,11 @@ class DCPattern:
     def __init__(self, center_lon: float, center_lat: float,
                  count: int, est_sub_depth: float, spread_nm: float = 0.03):
         self.charges: list[DepthCharge] = []
-        # Vary detonation depths around estimate
+        # Vary detonation depths around estimate (±20 feet only)
         for _ in range(count):
             jitter_lon = center_lon + random.uniform(-spread_nm / 60, spread_nm / 60)
             jitter_lat = center_lat + random.uniform(-spread_nm / 60, spread_nm / 60)
-            depth_offset = random.uniform(-50, 50)
+            depth_offset = random.uniform(-20, 20)  # ±20 ft, not ±50
             det_depth = max(50.0, est_sub_depth + depth_offset)
             self.charges.append(DepthCharge(jitter_lon, jitter_lat, det_depth))
         self.done = False

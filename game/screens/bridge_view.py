@@ -19,6 +19,8 @@ from game.constants import (
     KEY_VIEW_BRIDGE,
     KEY_VIEW_DAMAGE,
     KEY_VIEW_TORPEDO,
+    KEY_DIVE,
+    KEY_SURFACE,
 )
 from game.rendering.hud import draw_horizon
 from game.rendering.sprites import draw_ship_side_sprite
@@ -48,6 +50,10 @@ class BridgeViewScreen(BaseScreen):
                 sub.set_speed(min(3, sub.speed_setting + 1))
             elif event.key == pygame.K_DOWN:
                 sub.set_speed(max(0, sub.speed_setting - 1))
+            elif event.key == KEY_DIVE:
+                sub.target_depth = min(sub.spec["max_depth"], sub.target_depth + 50)
+            elif event.key == KEY_SURFACE:
+                sub.target_depth = 0
             elif event.key == KEY_VIEW_CHART:
                 cycle_to_view(self.manager, "chart")
             elif event.key == KEY_VIEW_PERISCOPE:
@@ -60,9 +66,8 @@ class BridgeViewScreen(BaseScreen):
                 cycle_to_view(self.manager, "torpedo")
 
     def update(self, dt):
-        # Bridge implies surfaced.
         sub = self.manager.game_state.get("submarine")
-        sub.target_depth = 0
+        # Note: Bridge operates at surface, but allows depth control
         update_combat_tick(self.manager, dt)
 
         state = self.manager.game_state.get("combat")

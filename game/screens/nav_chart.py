@@ -24,6 +24,8 @@ from game.constants import (
     KEY_VIEW_BRIDGE,
     KEY_VIEW_DAMAGE,
     KEY_VIEW_TORPEDO,
+    KEY_DIVE,
+    KEY_SURFACE,
 )
 from game.rendering.ship_renderer import draw_ship_top
 from game.rendering.sprites import draw_ship_top_sprite
@@ -62,6 +64,10 @@ class NavChartScreen(BaseScreen):
                 sub.set_speed(min(3, sub.speed_setting + 1))
             elif event.key == KEY_SPEED_DOWN:
                 sub.set_speed(max(0, sub.speed_setting - 1))
+            elif event.key == KEY_DIVE:
+                sub.target_depth = min(sub.spec["max_depth"], sub.target_depth + 50)
+            elif event.key == KEY_SURFACE:
+                sub.target_depth = 0
             elif event.key == KEY_FIRE_TORPEDO:
                 if sub.fire_fore():
                     torp = Torpedo(sub.lon, sub.lat, sub.course, depth=sub.torp_depth, high_speed=sub.torp_speed_high, fuse=sub.torp_fuse)

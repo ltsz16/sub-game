@@ -45,7 +45,7 @@ def update_combat_tick(manager, dt):
 
     # Random ASW pattern from nearby warship
     for ship in convoy.alive_ships:
-        if ship.is_warship and random.random() < 0.004:
+        if ship.is_warship and random.random() < 0.008:  # 0.8% per frame ~= 48% per second
             dc = generate_dc_pattern(ship, sub)
             state["dc_patterns"].append(dc)
             state["messages"].append(f"{ship.name} dropping depth charges!")
