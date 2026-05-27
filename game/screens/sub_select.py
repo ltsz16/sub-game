@@ -38,6 +38,37 @@ class SubSelectScreen(BaseScreen):
             lines.append(" ".join(line))
         return lines
 
+    def _draw_submarine_image(self, surface, sub_id, cx, cy):
+        """Load and draw submarine class image from us_subs directory."""
+        import os
+        from pathlib import Path
+        
+        # Convert underscore to hyphen for filename (s_class -> s-class)
+        filename = sub_id.replace("_", "-")
+        image_path = Path("game/assets/images/side/us_subs") / f"{filename}.png"
+        
+        # Try to load the submarine-specific image
+        if image_path.exists():
+            try:
+                img = pygame.image.load(str(image_path)).convert_alpha()
+                
+                # Scale to fit (target height ~180px to leave room)
+                target_height = 180
+                scale = target_height / img.get_height()
+                new_width = int(img.get_width() * scale)
+                new_height = int(img.get_height() * scale)
+                img = pygame.transform.scale(img, (new_width, new_height))
+                
+                # Position at center
+                rect = img.get_rect(center=(cx, cy))
+                surface.blit(img, rect)
+                return
+            except Exception as e:
+                print(f"Warning: Failed to load submarine image {sub_id}: {e}")
+        
+        # Fallback to generic submarine sprite if image not found
+        draw_ship_side_sprite(surface, "submarine", cx, cy, scale=5.5, color=(100, 200, 240))
+
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key in (pygame.K_LEFT, pygame.K_a):
@@ -79,10 +110,8 @@ class SubSelectScreen(BaseScreen):
         name = self.font_title.render(spec["name"], True, PHOSPHOR_BRIGHT)
         surface.blit(name, (card.x + 24, card.y + 24))
 
-        # Draw submarine image on left side, visible and within bounds
-        sub_x = card.x + 100
-        sub_y = card.y + 200
-        draw_ship_side_sprite(surface, "submarine", sub_x, sub_y, scale=5.5, color=(100, 200, 240))
+        # Draw submarine class image from us_subs directory (positioned on left-center)
+        self._draw_submarine_image(surface, spec["id"], card.x + 150, card.y + 200)
 
         lines = [
             f"Year Available: {spec['year_available']}",
@@ -101,12 +130,12 @@ class SubSelectScreen(BaseScreen):
             txt = self.font.render(line, True, LIGHT_GRAY)
             surface.blit(txt, (x, y + i * 28))
 
-        # Wrap and render description
+        # Wrap and render description (moved to right side with specs)
         desc_lines = self._wrap_text(spec["description"], max_width_chars=65)
-        desc_y = card.bottom - 90
+        desc_y = card.y + 290
         for desc_line in desc_lines[:3]:  # max 3 lines
             desc_txt = self.font_small.render(desc_line, True, (185, 205, 220))
-            surface.blit(desc_txt, (card.x + 24, desc_y))
+            surface.blit(desc_txt, (card.x + 280, desc_y))
             desc_y += 18
 
         hint = self.font_small.render("Left/Right: choose submarine    Enter: begin career    Esc: back", True, LIGHT_GRAY)

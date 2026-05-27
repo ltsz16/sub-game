@@ -94,21 +94,6 @@ SHIPS = [
         "silhouette_scale": 1.2,
         "description": "Carries troops to island garrisons. Often heavily escorted.",
     },
-    {
-        "id": "passenger_cargo",
-        "name": "Passenger-Cargo Ship",
-        "category": "merchant",
-        "tonnage": 9500,
-        "hp": 3,
-        "speed": 16.0,
-        "sonar_range": 0,
-        "visual_range": 6,
-        "dc_patterns": (0, 0),
-        "gun_range": 0.0,
-        "score_value": 1.2,
-        "silhouette_scale": 1.0,
-        "description": "Fast and valuable — requisitioned liners carrying supplies and personnel.",
-    },
 
     # ─── Escorts ───────────────────────────────────────────────────────────────
     {
@@ -216,11 +201,11 @@ CONVOY_TEMPLATES = [
     # Tanker convoy — high value
     [("tanker", 2), ("large_freighter", 1), ("escort", 2), ("destroyer", 1)],
     # Troop convoy
-    [("troop_transport", 2), ("passenger_cargo", 1), ("destroyer", 2), ("light_cruiser", 1)],
+    [("troop_transport", 2), ("destroyer", 2), ("light_cruiser", 1)],
     # Ammo resupply
     [("ammo_ship", 2), ("small_freighter", 1), ("escort", 1)],
     # Single high-value merchant
-    [("passenger_cargo", 1), ("destroyer", 1)],
+    [("troop_transport", 1), ("destroyer", 1)],
     # Warship task force
     [("heavy_cruiser", 1), ("destroyer", 3)],
     # Major fleet
