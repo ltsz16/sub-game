@@ -21,6 +21,12 @@ from game.constants import (
     KEY_VIEW_TORPEDO,
     KEY_DIVE,
     KEY_SURFACE,
+    KEY_SILENT_RUN,
+    KEY_DEPTH_PERISCOPE,
+    KEY_DEPTH_SHALLOW,
+    KEY_DEPTH_CRUSH,
+    DEPTH_PERISCOPE,
+    DEPTH_SHALLOW,
 )
 from game.rendering.hud import draw_horizon
 from game.rendering.sprites import draw_ship_side_sprite
@@ -54,6 +60,14 @@ class BridgeViewScreen(BaseScreen):
                 sub.target_depth = min(sub.spec["max_depth"], sub.target_depth + 50)
             elif event.key == KEY_SURFACE:
                 sub.target_depth = 0
+            elif event.key == KEY_SILENT_RUN:
+                sub.silent_running = not sub.silent_running
+            elif event.key == KEY_DEPTH_PERISCOPE:
+                sub.target_depth = DEPTH_PERISCOPE
+            elif event.key == KEY_DEPTH_SHALLOW:
+                sub.target_depth = DEPTH_SHALLOW
+            elif event.key == KEY_DEPTH_CRUSH:
+                sub.target_depth = sub.spec["max_depth"]
             elif event.key == KEY_VIEW_CHART:
                 cycle_to_view(self.manager, "chart")
             elif event.key == KEY_VIEW_PERISCOPE:

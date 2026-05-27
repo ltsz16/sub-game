@@ -22,6 +22,10 @@ from game.constants import (
     KEY_FIRE_TORPEDO,
     KEY_DIVE,
     KEY_SURFACE,
+    KEY_SILENT_RUN,
+    KEY_DEPTH_PERISCOPE,
+    KEY_DEPTH_SHALLOW,
+    KEY_DEPTH_CRUSH,
     DEPTH_PERISCOPE,
 )
 from game.rendering.hud import draw_horizon
@@ -60,6 +64,15 @@ class PeriscopeViewScreen(BaseScreen):
             elif event.key == KEY_SURFACE:
                 # Surface
                 sub.target_depth = 0
+            elif event.key == KEY_SILENT_RUN:
+                sub.silent_running = not sub.silent_running
+            elif event.key == KEY_DEPTH_PERISCOPE:
+                sub.target_depth = DEPTH_PERISCOPE
+            elif event.key == KEY_DEPTH_SHALLOW:
+                # Periscope view can't go to shallow (need surface for that)
+                sub.target_depth = DEPTH_PERISCOPE
+            elif event.key == KEY_DEPTH_CRUSH:
+                sub.target_depth = sub.spec["max_depth"]
             elif event.key == KEY_FIRE_TORPEDO:
                 if sub.fire_fore():
                     torp = Torpedo(sub.lon, sub.lat, sub.course, depth=sub.torp_depth, high_speed=sub.torp_speed_high, fuse=sub.torp_fuse)

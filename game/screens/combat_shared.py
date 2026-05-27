@@ -39,6 +39,7 @@ def update_combat_tick(manager, dt):
 
     # Enemy detection and depth-charge attack
     detected = convoy_detection_check(sub, convoy, is_day=True, sea_state=2)
+    state["detected"] = detected  # Track detection status for UI
     if detected:
         convoy.alert_all(sub.lon, sub.lat)
         state["messages"].append("Escort sonar contact!")
