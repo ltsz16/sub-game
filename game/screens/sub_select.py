@@ -20,6 +20,24 @@ class SubSelectScreen(BaseScreen):
         self.font = pygame.font.SysFont("consolas", 20)
         self.font_small = pygame.font.SysFont("consolas", 16)
 
+    def _wrap_text(self, text, max_width_chars=60):
+        """Wrap text to fit within character width."""
+        words = text.split()
+        lines = []
+        line = []
+        for w in words:
+            test_line = line + [w]
+            test_str = " ".join(test_line)
+            if len(test_str) > max_width_chars:
+                if line:
+                    lines.append(" ".join(line))
+                line = [w]
+            else:
+                line = test_line
+        if line:
+            lines.append(" ".join(line))
+        return lines
+
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key in (pygame.K_LEFT, pygame.K_a):
@@ -61,7 +79,10 @@ class SubSelectScreen(BaseScreen):
         name = self.font_title.render(spec["name"], True, PHOSPHOR_BRIGHT)
         surface.blit(name, (card.x + 24, card.y + 24))
 
-        draw_ship_side(surface, "submarine", card.x + 280, card.y + 260, scale=6.5, color=(80, 92, 110))
+        # Draw submarine image on left side, visible and within bounds
+        sub_x = card.x + 100
+        sub_y = card.y + 200
+        draw_ship_side(surface, "submarine", sub_x, sub_y, scale=4.0, color=(80, 92, 110))
 
         lines = [
             f"Year Available: {spec['year_available']}",
@@ -74,14 +95,19 @@ class SubSelectScreen(BaseScreen):
             f"Displacement: {spec['displacement']} tons",
         ]
 
-        x = card.x + 520
-        y = card.y + 170
+        x = card.x + 280
+        y = card.y + 80
         for i, line in enumerate(lines):
             txt = self.font.render(line, True, LIGHT_GRAY)
             surface.blit(txt, (x, y + i * 28))
 
-        desc = self.font_small.render(spec["description"], True, (185, 205, 220))
-        surface.blit(desc, (card.x + 24, card.bottom - 70))
+        # Wrap and render description
+        desc_lines = self._wrap_text(spec["description"], max_width_chars=65)
+        desc_y = card.bottom - 90
+        for desc_line in desc_lines[:3]:  # max 3 lines
+            desc_txt = self.font_small.render(desc_line, True, (185, 205, 220))
+            surface.blit(desc_txt, (card.x + 24, desc_y))
+            desc_y += 18
 
         hint = self.font_small.render("Left/Right: choose submarine    Enter: begin career    Esc: back", True, LIGHT_GRAY)
         surface.blit(hint, (card.x + 24, card.bottom - 32))

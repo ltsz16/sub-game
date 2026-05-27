@@ -59,7 +59,18 @@ class StrategicMapScreen(BaseScreen):
         # Contact chance rises if we're in selected patrol area vicinity.
         dist = ((self.sub.lon - area["center_lon"]) ** 2 + (self.sub.lat - area["center_lat"]) ** 2) ** 0.5
         proximity = 1.0 if dist < area["radius_deg"] * 1.4 else 0.2
-        base = 0.012 * area["convoy_density"] * self.career.enemy_density_mult * proximity
+        # Increased base probability 10x and add guaranteed contact after 10 min in area
+        base = 0.12 * area["convoy_density"] * self.career.enemy_density_mult * proximity
+        # Guaranteed contact if player has been in patrol area for 10+ minutes real-time
+        if proximity >= 1.0:
+            if not hasattr(self, '_area_entry_time'):
+                self._area_entry_time = 0.0
+            self._area_entry_time += self._last_dt if hasattr(self, '_last_dt') else 0.01
+            if self._area_entry_time > 600.0:
+                base = 1.0  # guarantee
+        elif hasattr(self, '_area_entry_time'):
+            self._area_entry_time = 0.0
+
         if random.random() < base:
             self.career.start_patrol(area["id"])
             template = self.career.generate_convoy(area)
@@ -130,6 +141,8 @@ class StrategicMapScreen(BaseScreen):
                 self.manager.switch(MainMenuScreen())
 
     def update(self, dt):
+        self._last_dt = dt
+        
         if self.paused:
             return
 
