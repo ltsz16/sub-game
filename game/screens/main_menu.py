@@ -2,6 +2,8 @@
 Main menu screen.
 """
 
+import os
+import json
 import pygame
 
 from game.state_manager import BaseScreen
@@ -16,6 +18,7 @@ from game.constants import (
     LIGHT_GRAY,
 )
 from game.rendering.ship_renderer import draw_ship_side
+from game.save_load import default_save_path, load_game_state
 
 
 class MainMenuScreen(BaseScreen):
@@ -24,9 +27,14 @@ class MainMenuScreen(BaseScreen):
         self.font_title = pygame.font.SysFont("georgia", 58, bold=True)
         self.font_menu = pygame.font.SysFont("consolas", 28)
         self.font_help = pygame.font.SysFont("consolas", 18)
-        self.options = ["Start Career", "Quit"]
+        self.save_path = default_save_path()
+        self.options = ["Start Career"]
+        if os.path.exists(self.save_path):
+            self.options.append("Continue Career")
+        self.options.append("Quit")
         self.selection = 0
         self.anim_x = -200
+        self.message = ""
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -35,9 +43,19 @@ class MainMenuScreen(BaseScreen):
             elif event.key in (pygame.K_DOWN, pygame.K_s):
                 self.selection = (self.selection + 1) % len(self.options)
             elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
-                if self.selection == 0:
+                chosen = self.options[self.selection]
+                if chosen == "Start Career":
                     from game.screens.sub_select import SubSelectScreen
                     self.manager.switch(SubSelectScreen())
+                elif chosen == "Continue Career":
+                    try:
+                        career, sub = load_game_state(self.save_path)
+                        self.manager.game_state["career"] = career
+                        self.manager.game_state["submarine"] = sub
+                        from game.screens.strategic_map import StrategicMapScreen
+                        self.manager.switch(StrategicMapScreen())
+                    except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError):
+                        self.message = "Could not load save. Start a new career instead."
                 else:
                     self.manager.quit()
             elif event.key == pygame.K_ESCAPE:
@@ -69,3 +87,7 @@ class MainMenuScreen(BaseScreen):
         help2 = self.font_help.render("Enter: confirm", True, LIGHT_GRAY)
         surface.blit(help1, (20, SCREEN_HEIGHT - 52))
         surface.blit(help2, (20, SCREEN_HEIGHT - 30))
+
+        if self.message:
+            msg = self.font_help.render(self.message, True, AMBER_BRIGHT)
+            surface.blit(msg, (SCREEN_WIDTH // 2 - msg.get_width() // 2, SCREEN_HEIGHT - 34))

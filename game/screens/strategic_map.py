@@ -3,6 +3,7 @@ Strategic Pacific map screen.
 """
 
 import random
+import json
 import pygame
 
 from game.state_manager import BaseScreen
@@ -20,6 +21,7 @@ from game.constants import (
 )
 from game.rendering.map_renderer import MapRenderer
 from game.entities.convoy import Convoy
+from game.save_load import default_save_path, save_game, load_game_state
 
 
 class StrategicMapScreen(BaseScreen):
@@ -35,6 +37,8 @@ class StrategicMapScreen(BaseScreen):
         self.time_accel = 10
         self.contact_roll_timer = 0.0
         self.selected_area_idx = 0
+        self.status_message = ""
+        self.status_timer = 0.0
 
         self.viewport = [self.sub.lon, self.sub.lat, 1.0]
 
@@ -57,6 +61,7 @@ class StrategicMapScreen(BaseScreen):
         proximity = 1.0 if dist < area["radius_deg"] * 1.4 else 0.2
         base = 0.012 * area["convoy_density"] * self.career.enemy_density_mult * proximity
         if random.random() < base:
+            self.career.start_patrol(area["id"])
             template = self.career.generate_convoy(area)
             convoy = Convoy(template, area["center_lon"], area["center_lat"], course=random.uniform(0, 360))
             self.manager.game_state["combat"] = {
@@ -104,6 +109,22 @@ class StrategicMapScreen(BaseScreen):
                 if events:
                     from game.screens.historical_events import HistoricalEventScreen
                     self.manager.switch(HistoricalEventScreen(), event=events[-1], return_to=StrategicMapScreen())
+            elif event.key == pygame.K_F9:
+                path = default_save_path()
+                save_game(path, self.career, self.sub)
+                self.status_message = f"Saved campaign to {path}"
+                self.status_timer = 4.0
+            elif event.key == pygame.K_F10:
+                path = default_save_path()
+                try:
+                    career, sub = load_game_state(path)
+                    self.manager.game_state["career"] = career
+                    self.manager.game_state["submarine"] = sub
+                    self.manager.switch(StrategicMapScreen())
+                    return
+                except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError):
+                    self.status_message = "Load failed. No valid save found."
+                    self.status_timer = 4.0
             elif event.key == KEY_ESCAPE:
                 from game.screens.main_menu import MainMenuScreen
                 self.manager.switch(MainMenuScreen())
@@ -132,6 +153,11 @@ class StrategicMapScreen(BaseScreen):
         self.viewport[0] = self.sub.lon
         self.viewport[1] = self.sub.lat
 
+        if self.status_timer > 0:
+            self.status_timer -= dt
+            if self.status_timer <= 0:
+                self.status_message = ""
+
     def draw(self, surface):
         self.map_renderer.draw_map(surface, self.viewport)
         self.map_renderer.draw_patrol_areas(surface, self.available_areas, self.viewport, selected_area_id=(self._selected_area() or {}).get("id"))
@@ -148,6 +174,9 @@ class StrategicMapScreen(BaseScreen):
             "",
             "Arrows: course  +/-: speed  1-4: time accel  P: pause",
             "Tab: cycle patrol area  C: force contact  H: show event",
+            "F9: save campaign  F10: load campaign",
             "Esc: main menu",
         ]
+        if self.status_message:
+            lines.append(self.status_message)
         self.map_renderer.draw_overlay_text(surface, lines)
