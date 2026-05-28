@@ -77,8 +77,14 @@ def cycle_to_view(manager, key):
         from game.screens.bridge_view import BridgeViewScreen
         manager.switch(BridgeViewScreen())
     elif key == "damage":
-        from game.screens.damage_control import DamageControlScreen
-        manager.switch(DamageControlScreen())
+        from game.screens.damage_control_detail import DamageControlDetailScreen
+        manager.switch(DamageControlDetailScreen())
     elif key == "torpedo":
         from game.screens.torpedo_room import TorpedoRoomScreen
         manager.switch(TorpedoRoomScreen())
+    elif key == "gauges":
+        from game.screens.gauge_panel_screen import GaugePanelScreen
+        manager.switch(GaugePanelScreen())
+    elif key == "systems":
+        from game.screens.system_status_screen import SystemStatusScreen
+        manager.switch(SystemStatusScreen())

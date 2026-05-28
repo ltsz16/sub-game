@@ -115,6 +115,20 @@ Once in combat:
 **Depth/Speed/Course (all views):**
 - D: Dive (+50 ft)
 - S: Surface (0 ft)
+- P: Go to Periscope Depth (~60 ft)
+- A: Go to Shallow Depth (~200 ft)
+- M: Go to Maximum Depth (crush limit)
+- R: Toggle Silent Running (reduce noise, reduce detection)
+
+### Enhanced Combat View Selection
+
+Beyond the five primary combat views, additional specialized displays provide comprehensive submarine monitoring:
+
+**Optional Enhanced Views (accessible via F1-F5 cycling):**
+- **Gauge Panel**: Comprehensive instrument display with main gauges (depth/speed/heading/battery) in 2x2 layout, plus compass rose, secondary instruments, and detailed status readouts
+- **System Status Monitor**: Real-time display of all submarine systems including propulsion, torpedoes, sonar/radar, hull integrity, compartment status, and operational modes
+
+These enhanced views provide deeper situational awareness and tactical information, inspired by classic submarine simulator interfaces.
 
 ### Chart Room (Tactical)
 
@@ -153,6 +167,13 @@ Once in combat:
 - 0: clear repair assignment
 - View compartment damage, flooding rate, and repair progress
 
+**Enhanced Damage Control Schematic (Priority 3 Feature):**
+- Graphical 16-compartment grid layout showing ship layout with damage percentages
+- Real-time flooding and damage visualization with color-coded severity
+- Compartment-specific systems status and repair progress tracking
+- Quick-assign repair teams with number keys (0-9) while viewing the schematic
+- Inspired by Silent Service II interface
+
 **Emergency procedures:**
 - Critical flooding in 2+ compartments: submarine sinks
 - Depth below crush limit (600 ft): automatic sinking
@@ -167,7 +188,28 @@ Once in combat:
 - ]: increase torpedo depth
 - D / S: dive/surface (during combat prep)
 
-## Submarine Status Display
+## Battery & Fuel Management
+
+**Battery (submerged operations):**
+- Powers all systems when submerged
+- Drains based on speed (faster = more drain)
+- Limited by speed/battery ratio; running at full speed drains battery quickly
+- Recharges when surfaced using diesel engines
+- Critical capacity: 48+ hours at slow speed, 6-8 hours at full speed
+- **Silent running mode** reduces detection but sacrifices speed (battery drains slower at reduced noise)
+
+**Fuel (surface operations):**
+- Powers diesel engines when surfaced
+- Used for transit and battery recharging
+- Each submarine class has different fuel capacity and range (5,000-15,000 nm)
+- Not consumed while submerged (battery is the limiting factor)
+- Must return to port or find support ships to refuel
+
+**Management Strategy:**
+- Alternate between diving (battery) and surfacing (fuel) based on operational needs
+- Use silent running to extend battery life when under sonar threat
+- Balance speed vs. battery: slower dives last longer
+- Fuel management less critical in combat, more important for patrol transit
 
 During combat, all views display submarine operational data with **WWII-style analog gauges**:
 - **Depth gauge**: Current depth with crush depth warning zone (red area at 600+ ft)
@@ -177,6 +219,66 @@ During combat, all views display submarine operational data with **WWII-style an
 - **Trim indicator**: Bow up/down position during maneuvers
 
 This immersive display provides authentic 1940s submarine aesthetic while conveying critical operational data at a glance.
+
+### Gauge Panel Display (Priority 3 Feature)
+
+Press 'G' in combat to access the comprehensive instrument panel featuring:
+- **Main Gauge Cluster**: 2x2 layout of primary instruments (depth, speed, heading, battery)
+- **Compass Rose**: Large detailed compass with current heading displayed prominently
+- **Secondary Instruments**: Sonar mode, radar status, periscope position, and engagement solutions
+- **Detailed Readouts**: Current position coordinates, hull integrity, operational status, and detection status
+- **Depth & Rudder Indicators**: Visual indication of depth trend and rudder angle
+
+This dedicated display is designed for tactical situation assessment during engagements.
+
+### System Status Monitor (Priority 3 Feature)
+
+Press 'S' in combat to access the comprehensive system status display showing:
+- **Propulsion Systems**: Diesel engines, main battery, and power status
+- **Torpedo Systems**: Tube loading status, reload progress, and torpedo inventory
+- **Sonar & Detection**: Sonar mode, radar, periscope status, and acoustic signatures
+- **Hull Integrity**: Overall hull condition and critical compartment status
+- **Critical Compartments**: Engine room, battery room, torpedo room, and control room status
+- **Resources**: Fuel level, crew status, decoy count, and operational readiness
+- **Operational Status**: Submersion state, depth mode, and silent running status
+
+This consolidated display provides complete submarine system overview for tactical decision-making.
+
+## Silent Running & Detection
+
+**Silent Running Mode (R key):**
+- Reduces submarine noise signature and sonar detection probability
+- Dramatically reduces detection range (75% detection probability reduction)
+- Trade-off: Limited speed to minimize noise while operating at reduced speed
+- When active, sonar detection probability reduced by 75%
+- Useful when being hunted or approaching targets to avoid early contact
+
+**Detection Systems:**
+
+*Enemy Detection of You:*
+- **Sonar**: Warships detect submerged submarines by acoustic signature
+  - Detection range: 2-10 nm depending on escort capability
+  - Factors affecting detection: sub speed (noise), depth (propagation), distance
+  - Deeper diving reduces detection (thermal layers, pressure effects)
+  - Silent running mode: 75% reduction in detection probability
+- **Visual**: Surfaced submarines and periscope wakes spotted by lookouts
+  - Range: 0-8 nm depending on weather, time of day, submarine depth
+  - Periscope wakes visible only at depths <60 ft
+  - Limited at night and in poor weather
+
+*Your Detection of Enemies:*
+- **Periscope observation**: Limited range when submerged
+  - Periscope depth (~60 ft): ~5 nm observation range
+  - Surfaced: up to 10 nm in clear weather/daylight
+  - Halved at night, reduced in storms
+- **Lookout watch**: Surfaced submarines have best visibility
+
+**Defensive Tactics:**
+- Use silent running when in active sonar range
+- Vary depth to break enemy targeting estimates
+- Surface to recharge battery and improve visibility for spotting targets
+- Keep moving to avoid static sonar pattern predictions
+- Deep diving (>300 ft) significantly reduces sonar detection
 
 ## Depth Charge Mechanics
 
